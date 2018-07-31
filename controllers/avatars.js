@@ -7,7 +7,7 @@ module.exports = app => {
 
 	return {
 		// SAVES A NEW AVATAR
-		create: (req, res, done) => {
+		create: async (req, res, done) => {
 			if (!req.file) return sendError('Unable to locate the new avatar image.', res, next);
 
 			try {
@@ -26,7 +26,7 @@ module.exports = app => {
 			} catch (err) { return sendError(err, res, next); }
 		},
 		// DELETES CURRENT AVATAR
-		deleteOne: (req, res, done) => {
+		deleteOne: async (req, res, done) => {
 			try {
 				const avatar = db.oneOrNone(getCurrentAvatar(), [req.session.id])
 				if (!avatar) return sendError('Could not locate your current avatar.', res, done)
@@ -40,7 +40,7 @@ module.exports = app => {
 			} catch (err) { return sendError(err, res, next); }
 		},
 		// DELETES CURRENT AVATAR
-		updateOne: (req, res, done) => {
+		updateOne: async (req, res, done) => {
 			// try {
 			//   const avatar = db.oneOrNone(getCurrentAvatar(), [req.session.id])
 			//   if (!avatar) return sendError('Could not locate your current avatar.', res, done)

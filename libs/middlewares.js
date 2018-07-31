@@ -13,7 +13,7 @@ const sharp					= require('sharp');
 const vars        	= require('../config/vars.js');
 
 const env = process.env.NODE_ENV;
-console.log(`[SUBSKRIBBLE IMAGE MICROSERVICE ${env.toUpperCase()} ENVIRONMENT] \n`, vars[env], "\n");
+console.log(`[SUBSKRIBBLE AVATAR MICROSERVICE ${env.toUpperCase()} ENVIRONMENT] \n`, vars[env], "\n");
 //============================================================//
 /* APP MIDDLEWARE */
 //============================================================//
@@ -21,7 +21,6 @@ module.exports = app => {
 	/// CONFIGS ///
 	app.set('env', env); // sets current env mode (development, production or test)
 	app.set("cookieKey", vars[env].cookieKey); // sets unique cookie key
-	app.set('host', vars[env].host); // sets localhost or remote host
 	app.set('dbpassword', vars[env].dbpassword); // sets database password
 	app.set('dbport', vars[env].dbport); // sets database port
 	app.set('dbowner', vars[env].dbowner); // sets owner of database

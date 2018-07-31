@@ -1,21 +1,21 @@
-const fs = require('fs');
-const multer = require('multer');
-const sharp = require('sharp');
+module.exports = app => (req, res, next) => {
+	const fs = app.get('fs');
+	const multer = app.get('multer');
+	const sharp = app.get('sharp');
 
-const uploadImage = multer({
-	fileFilter: (req, file, next) => {
-		if (!/\.(jpe?g|png|gif|bmp)$/i.test(file.originalname)) {
-			return next('That file extension is not accepted!', false);
+	const uploadImage = multer({
+		fileFilter: (req, file, next) => {
+			if (!/\.(jpe?g|png|gif|bmp)$/i.test(file.originalname)) {
+				return next('That file extension is not accepted!', false);
+			}
+			next(null, true);
 		}
-		next(null, true);
-	}
-}).single('file');
+	}).single('file');
 
-module.exports = (req, res, done) => {
-	uploadImage(req, res, (err) => {
+	const saveImage = (req, res, (err) => {
 		if (err) return done(null, false, err);
 		if (!req.file) return done(null, false);
-		
+
 		const filename = Date.now() + '-' + req.file.originalname;
 		const filepath = `uploads/${filename}`;
 
@@ -39,4 +39,6 @@ module.exports = (req, res, done) => {
 			});
 		}
 	});
-};
+
+	return saveImage;
+}
