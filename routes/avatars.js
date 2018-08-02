@@ -5,26 +5,26 @@ module.exports = app => {
 	const { sendError } = app.shared.helpers;
 	const apiURL = app.get("apiURL");
 	const fs = app.get('fs');
-	const multer = app.get('multer');
 	const sharp = app.get('sharp');
+	const multer = require('multer');
+	const upload = app.services.multer;
 	// const upload = multer({ dest: 'uploads/'})
-	const upload = multer({
-		fileFilter: (req, file, next) => {
-			return (!/\.(jpe?g|png|gif|bmp)$/i.test(file.originalname))
-				? next('That file extension is not accepted!', false)
-				: next(null, true);
-		}
-	}).single('file');
+	// const upload = multer({
+	// 	fileFilter: (req, file, next) => {
+	// 		return (!/\.(jpe?g|png|gif|bmp)$/i.test(file.originalname))
+	// 			? next('That file extension is not accepted!', false)
+	// 			: next(null, true);
+	// 	}
+	// }).single('file');
 
 	// app.post('/api/avatar/create', requireAuth, create);
 	app.post('/api/avatar/create', requireAuth, upload, async (req, res, next) => {
-		// if (err) return sendError(err, res, next);
+		if (req.err) return sendError(req.err, res, next);
 		if (!req.file) return sendError('Unable to locate the requested file to be saved', res, next);
-		console.log('req.file', req.file);
+
 		const filename = Date.now() + '-' + req.file.originalname;
 		const filepath = `uploads/${filename}`;
-
-		if (/\.(gif)$/i.test(req.file.originalname) || /\.(bmp)$/i.test(req.file.originalname)) {
+		if (/\.(gif|bmp)$/i.test(req.file.originalname)) {
 			fs.writeFile(filepath, req.file.buffer, (err) => {
 				if (err) return sendError('There was a problem saving the image.', res, next);
 				// return next(null, req.file);
@@ -42,9 +42,12 @@ module.exports = app => {
 		}
 
 		try {
-			await db.result(updateAvatar(), [req.session.id, `${apiURL}/${filepath}`, filepath]);
+			const avatarurl = `${apiURL}/${filepath}`;
 
-			res.status(201).json({ message: 'Succesfully saved your new avatar.' });
+			await db.result(updateAvatar(), [req.session.id, avatarurl, filepath]);
+			req.session.avatarurl = avatarurl;
+
+			res.status(201).json({ avatarurl, message: 'Succesfully saved your new avatar.' });
 		} catch (err) {
 			console.log('err', err)
 			return sendError(err, res, next);
