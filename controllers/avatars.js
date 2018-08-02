@@ -1,21 +1,20 @@
 module.exports = app => {
 	const { db, query: { getCurrentAvatar, deleteAvatar, updateAvatar } } = app.database;
 	const { sendError } = app.shared.helpers;
-	const upload = app.services.multer;
 	const apiURL = app.get("apiURL");
-	const fs = app.get("fs");
 
 	return {
 		// SAVES A NEW AVATAR
-		create: (req, res, done) => upload(req, res, async (err, file) => {
-			if ( err || !file) return sendError(err || 'Unable to save the new avatar image.', res, next);
-
+		create: async (req, res, done) => {
 			try {
-				await db.result(updateAvatar(), [req.session.id, `${apiURL}/${req.file.path}`, req.file.path]);
+				const avatarurl = `${apiURL}/${req.file.path}`;
 
-				res.status(201).json({ message: 'Succesfully saved your new avatar.' });
+				await db.result(updateAvatar(), [req.session.id, avatarurl, req.file.path]);
+				req.session.avatarurl = avatarurl;
+
+				res.status(201).json({ avatarurl, message: 'Succesfully saved your new avatar.' });
 			} catch (err) { return sendError(err, res, done); }
-		})(req, res, done),
+		},
 		// GETS USER CURRENT AVATAR
 		getOne: async (req, res, done) => {
 			try {
