@@ -1,7 +1,6 @@
-const path    = require('path');
-const express = require('express');
-
 module.exports = app => {
+	const express = app.get("express");
+	const path = app.get("path");
 	const PORT = app.get("port");
 
 	//============================================================//
