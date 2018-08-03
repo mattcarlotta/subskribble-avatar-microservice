@@ -1,5 +1,4 @@
 module.exports = app => ({
-	getCurrentAvatar: () => ("SELECT avatarURL FROM users WHERE id=$1"),
-	deleteAvatar: () => ("DELETE FROM users(avatarURL,avatarFilePath) WHERE id=$1 RETURNING *"),
+	getCurrentAvatarPath: () => ("SELECT avatarFilePath FROM users WHERE id=$1"),
 	updateAvatar: () => ("UPDATE users SET avatarURL=$2, avatarFilePath=$3 WHERE id=$1")
 })
