@@ -3,8 +3,7 @@ module.exports = app => async (req, res, next) => {
   const fs = app.get('fs');
   const sharp = app.get('sharp');
 
-  if (req.err) return sendError(req.err, res, next);
-  if (!req.file) return sendError('Unable to locate the requested file to be saved', res, next);
+  if (req.err || !req.file) return sendError(req.err || 'Unable to locate the requested file to be saved', res, next);
 
   const filename = Date.now() + '-' + req.file.originalname;
   const filepath = `uploads/${filename}`;

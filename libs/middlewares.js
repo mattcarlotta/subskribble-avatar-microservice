@@ -39,6 +39,20 @@ module.exports = app => {
 	app.set("sharp", sharp); // framework for saving images
 	app.use(cors({credentials: true, origin: vars[env].portal})) // allows receiving of cookies from front-end
 	app.use(morgan('tiny')); // logging framework
+	app.use(multer({
+		limits: {
+			fileSize: 10240000,
+			files: 1,
+			fields: 1
+		},
+		fileFilter: (req, file, next) => {
+			if (!/\.(jpe?g|png|gif|bmp)$/i.test(file.originalname)) {
+				req.err = "That file extension is not accepted!"
+				next(null, false)
+			}
+	 		next(null, true);
+		}
+	}).single('file'))
 	app.use(bodyParser.json()); // parses header requests (req.body)
 	app.use(bodyParser.urlencoded({ limit: '10mb', extended: true })); // allows objects and arrays to be URL-encoded
 	app.use(cookieParser()); // parses header cookies
