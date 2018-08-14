@@ -1,7 +1,7 @@
 const randomToken  = require('random-token').create('abcdefghijklmnopqrstuvwxzyABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789');
 
 module.exports = app => {
-	const { db, query: { createAvatar, deleteAvatar, deleteAccountAvatar, getCurrentAvatarPath, updateAvatar } } = app.database;
+	const { db, query: { createAvatar, deleteAvatar, deleteAccountAvatar, getCurrentAvatarPath, getCurrentAvatarURL, updateAvatar } } = app.database;
 	const { sendError } = app.shared.helpers;
 	const apiURL = app.get("apiURL");
 	const fs = app.get("fs");
@@ -33,6 +33,19 @@ module.exports = app => {
 				req.session.avatarurl = undefined;
 
 				res.status(201).json({ message: 'Succesfully removed your current avatar.' });
+			} catch (err) { return sendError(err, res, done); }
+		},
+		// FETCHES CURRENT AVATAR WHEN USER LOGINS IN
+		fetchOne: async (req, res, done) => {
+			try {
+				const { avatarurl } = await db.oneOrNone(getCurrentAvatarURL(), [req.session.id])
+
+				if (avatarurl) req.session.avatarurl = avatarurl;
+
+				return avatarurl
+				? res.status(201).json({ avatarurl })
+				: res.status(201).json({})
+
 			} catch (err) { return sendError(err, res, done); }
 		},
 		// DELETES CURRENT AVATAR WHEN USER ACCOUNT HAS BEEN CLOSED
