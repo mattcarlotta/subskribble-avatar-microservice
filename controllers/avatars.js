@@ -38,22 +38,19 @@ module.exports = app => {
 		// FETCHES CURRENT AVATAR WHEN USER LOGINS IN
 		fetchOne: async (req, res, done) => {
 			try {
-				const { avatarurl } = await db.oneOrNone(getCurrentAvatarURL(), [req.session.id])
-
-				if (avatarurl) req.session.avatarurl = avatarurl;
-
-				return avatarurl
-				? res.status(201).json({ avatarurl })
-				: res.status(201).json({})
-
+				const avatar = await db.oneOrNone(getCurrentAvatarURL(), [req.session.id])
+				if (!avatar) {
+					res.status(201).json({})
+				} else {
+					req.session.avatarurl = avatar.avatarurl;
+					res.status(201).json({ avatarurl: avatar.avatarurl })
+				}
 			} catch (err) { return sendError(err, res, done); }
 		},
 		// DELETES CURRENT AVATAR WHEN USER ACCOUNT HAS BEEN CLOSED
 		removeAccount: async (req, res, done) => {
 			if (!req.body || !req.body.token || !req.body.userid) return sendError('Missing avatar delete parameters.', res, done);
 			const { token, userid } = req.body;
-
-			console.log('userid', userid);
 
 			try {
 				const { avatarfilepath } = await db.oneOrNone(getCurrentAvatarPath(), [userid])
