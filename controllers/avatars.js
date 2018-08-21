@@ -1,4 +1,4 @@
-const randomToken  = require('random-token').create('abcdefghijklmnopqrstuvwxzyABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789');
+const randomToken  = require(`random-token`).create(`abcdefghijklmnopqrstuvwxzyABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789`);
 
 module.exports = app => {
 	const { db, query: { createAvatar, deleteAvatar, deleteAccountAvatar, getCurrentAvatarPath, getCurrentAvatarURL, updateAvatar } } = app.database;
@@ -16,14 +16,14 @@ module.exports = app => {
 				await db.result(createAvatar(), [req.session.id, avatarurl, req.file.path, token]);
 				req.session.avatarurl = avatarurl;
 
-				res.status(201).json({ avatarurl, message: 'Succesfully saved your new avatar.' });
+				res.status(201).json({ avatarurl, message: `Succesfully saved your new avatar.` });
 			} catch (err) { return sendError(err, res, done); }
 		},
 		// DELETES CURRENT AVATAR WHILE LOGGED IN
 		deleteOne: async (req, res, done) => {
 			try {
 				const { avatarfilepath } = await db.oneOrNone(getCurrentAvatarPath(), [req.session.id])
-				if (!avatarfilepath) return sendError('Unable to locate your current avatar file path', res, done);
+				if (!avatarfilepath) return sendError(`Unable to locate your current avatar file path`, res, done);
 
 				await fs.unlink(`${avatarfilepath}`, async err => {
 					if (err) return sendError(err, res, done);
@@ -32,7 +32,7 @@ module.exports = app => {
 				await db.none(deleteAvatar(), [req.session.id]);
 				req.session.avatarurl = undefined;
 
-				res.status(201).json({ message: 'Succesfully removed your current avatar.' });
+				res.status(201).json({ message: `Succesfully removed your current avatar.` });
 			} catch (err) { return sendError(err, res, done); }
 		},
 		// FETCHES CURRENT AVATAR WHEN USER LOGINS IN
@@ -49,12 +49,12 @@ module.exports = app => {
 		},
 		// DELETES CURRENT AVATAR WHEN USER ACCOUNT HAS BEEN CLOSED
 		removeAccount: async (req, res, done) => {
-			if (!req.body || !req.body.token || !req.body.userid) return sendError('Missing avatar delete parameters.', res, done);
+			if (!req.body || !req.body.token || !req.body.userid) return sendError(`Missing avatar delete parameters.`, res, done);
 			const { token, userid } = req.body;
 
 			try {
 				const { avatarfilepath } = await db.oneOrNone(getCurrentAvatarPath(), [userid])
-				if (!avatarfilepath) return sendError('Unable to locate your current avatar file path.', res, done);
+				if (!avatarfilepath) return sendError(`Unable to locate your current avatar file path.`, res, done);
 
 				await fs.unlink(`${avatarfilepath}`, async err => {
 					if (err) return sendError(err, res, done);
@@ -69,7 +69,7 @@ module.exports = app => {
 		updateOne: async (req, res, done) => {
 			try {
 				const { avatarfilepath } = await db.oneOrNone(getCurrentAvatarPath(), [req.session.id])
-				if (!avatarfilepath) return sendError('Unable to locate your current avatar file path', res, done);
+				if (!avatarfilepath) return sendError(`Unable to locate your current avatar file path`, res, done);
 
 				await fs.unlink(`${avatarfilepath}`, async err => {
 					if (err) return sendError(err, res, done);
@@ -79,7 +79,7 @@ module.exports = app => {
 				await db.result(updateAvatar(), [req.session.id, avatarurl, req.file.path]);
 				req.session.avatarurl = avatarurl;
 
-		    res.status(201).json({ avatarurl, message: 'Succesfully updated your avatar.' });
+		    res.status(201).json({ avatarurl, message: `Succesfully updated your avatar.` });
 			} catch (err) { return sendError(err, res, done); }
 		}
 	}
