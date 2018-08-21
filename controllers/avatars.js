@@ -3,8 +3,8 @@ const randomToken  = require(`random-token`).create(`abcdefghijklmnopqrstuvwxzyA
 module.exports = app => {
 	const { db, query: { createAvatar, deleteAvatar, deleteAccountAvatar, getCurrentAvatarPath, getCurrentAvatarURL, updateAvatar } } = app.database;
 	const { sendError } = app.shared.helpers;
-	const apiURL = app.get("apiURL");
-	const fs = app.get("fs");
+	const apiURL = app.get(`apiURL`);
+	const fs = app.get(`fs`);
 
 	return {
 		// SAVES A NEW AVATAR
@@ -40,10 +40,10 @@ module.exports = app => {
 			try {
 				const avatar = await db.oneOrNone(getCurrentAvatarURL(), [req.session.id])
 				if (!avatar) {
-					res.status(201).json({})
+					res.status(201);
 				} else {
 					req.session.avatarurl = avatar.avatarurl;
-					res.status(201).json({ avatarurl: avatar.avatarurl })
+					res.status(201).json({ avatarurl: avatar.avatarurl });
 				}
 			} catch (err) { return sendError(err, res, done); }
 		},
@@ -53,14 +53,14 @@ module.exports = app => {
 			const { token, userid } = req.body;
 
 			try {
-				const { avatarfilepath } = await db.oneOrNone(getCurrentAvatarPath(), [userid])
+				const { avatarfilepath } = await db.oneOrNone(getCurrentAvatarPath(), [userid]);
 				if (!avatarfilepath) return sendError(`Unable to locate your current avatar file path.`, res, done);
 
 				await fs.unlink(`${avatarfilepath}`, async err => {
 					if (err) return sendError(err, res, done);
 				});
 
-				await db.none(deleteAccountAvatar(), [userid, token])
+				await db.none(deleteAccountAvatar(), [userid, token]);
 
 				res.status(201).json({});
 			} catch (err) { return sendError(err, res, done); }
@@ -68,7 +68,7 @@ module.exports = app => {
 		// DELETES CURRENT AVATAR
 		updateOne: async (req, res, done) => {
 			try {
-				const { avatarfilepath } = await db.oneOrNone(getCurrentAvatarPath(), [req.session.id])
+				const { avatarfilepath } = await db.oneOrNone(getCurrentAvatarPath(), [req.session.id]);
 				if (!avatarfilepath) return sendError(`Unable to locate your current avatar file path`, res, done);
 
 				await fs.unlink(`${avatarfilepath}`, async err => {
