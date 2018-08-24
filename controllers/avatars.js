@@ -40,7 +40,7 @@ module.exports = app => {
 			try {
 				const avatar = await db.oneOrNone(getCurrentAvatarURL(), [req.session.id])
 				if (!avatar) {
-					res.status(201);
+					res.status(201).json({});
 				} else {
 					req.session.avatarurl = avatar.avatarurl;
 					res.status(201).json({ avatarurl: avatar.avatarurl });
