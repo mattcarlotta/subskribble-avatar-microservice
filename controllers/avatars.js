@@ -1,8 +1,8 @@
 const randomToken  = require(`random-token`).create(`abcdefghijklmnopqrstuvwxzyABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789`);
 
 module.exports = app => {
-	const { db, query: { createAvatar, deleteAvatar, deleteAccountAvatar, getCurrentAvatarPath, getCurrentAvatarURL, updateAvatar } } = app.database;
-	const { sendError } = app.shared.helpers;
+	const { db, query: { createAvatar, createNotification, deleteAvatar, deleteAccountAvatar, getCurrentAvatarPath, getCurrentAvatarURL, updateAvatar } } = app.database;
+	const { currentDate, sendError } = app.shared.helpers;
 	const apiURL = app.get(`apiURL`);
 	const fs = app.get(`fs`);
 
@@ -16,7 +16,9 @@ module.exports = app => {
 				await db.result(createAvatar(), [req.session.id, avatarurl, req.file.path, token]);
 				req.session.avatarurl = avatarurl;
 
-				res.status(201).json({ avatarurl, message: `Succesfully saved your new avatar.` });
+				await db.none(createNotification(), [req.session.id, 'settings', `Succesfully saved your avatar.`, currentDate]);
+
+				res.status(201).json({ avatarurl });
 			} catch (err) { return sendError(err, res, done); }
 		},
 		// DELETES CURRENT AVATAR WHILE LOGGED IN
@@ -40,7 +42,7 @@ module.exports = app => {
 			try {
 				const avatar = await db.oneOrNone(getCurrentAvatarURL(), [req.session.id])
 				if (!avatar) {
-					res.status(201).json({});
+					res.status(201).send(null);
 				} else {
 					req.session.avatarurl = avatar.avatarurl;
 					res.status(201).json({ avatarurl: avatar.avatarurl });
@@ -62,7 +64,7 @@ module.exports = app => {
 
 				await db.none(deleteAccountAvatar(), [userid, token]);
 
-				res.status(201).json({});
+				res.status(201).send(null);
 			} catch (err) { return sendError(err, res, done); }
 		},
 		// DELETES CURRENT AVATAR
@@ -79,7 +81,9 @@ module.exports = app => {
 				await db.result(updateAvatar(), [req.session.id, avatarurl, req.file.path]);
 				req.session.avatarurl = avatarurl;
 
-		    res.status(201).json({ avatarurl, message: `Succesfully updated your avatar.` });
+				await db.none(createNotification(), [req.session.id, 'settings', `Succesfully updated your avatar.`, currentDate]);
+
+		    res.status(201).json({ avatarurl });
 			} catch (err) { return sendError(err, res, done); }
 		}
 	}
