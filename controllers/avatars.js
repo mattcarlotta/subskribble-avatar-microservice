@@ -12,11 +12,12 @@ module.exports = app => {
 			try {
 				const avatarurl = `${apiURL}/${req.file.path}`;
 				const token = randomToken(32);
+				const date = currentDate();
 
 				await db.result(createAvatar(), [req.session.id, avatarurl, req.file.path, token]);
 				req.session.avatarurl = avatarurl;
 
-				await db.none(createNotification(), [req.session.id, 'settings', `Succesfully saved your avatar.`, currentDate]);
+				await db.none(createNotification(), [req.session.id, 'settings', `Succesfully saved your avatar.`, date]);
 
 				res.status(201).json({ avatarurl });
 			} catch (err) { return sendError(err, res, done); }
@@ -81,7 +82,8 @@ module.exports = app => {
 				await db.result(updateAvatar(), [req.session.id, avatarurl, req.file.path]);
 				req.session.avatarurl = avatarurl;
 
-				await db.none(createNotification(), [req.session.id, 'settings', `Succesfully updated your avatar.`, currentDate]);
+				const date = currentDate();
+				await db.none(createNotification(), [req.session.id, 'settings', `Succesfully updated your avatar.`, date]);
 
 		    res.status(201).json({ avatarurl });
 			} catch (err) { return sendError(err, res, done); }

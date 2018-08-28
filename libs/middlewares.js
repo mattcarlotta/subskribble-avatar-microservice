@@ -9,6 +9,7 @@ const moment				= require(`moment`);
 const morgan 				= require(`morgan`);
 const path					= require(`path`);
 const multer				= require(`multer`);
+const randomToken		= require('random-token').create('abcdefghijklmnopqrstuvwxzyABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789');
 const sharp					= require(`sharp`);
 const vars					= require(`../config/vars.js`);
 
@@ -36,6 +37,7 @@ module.exports = app => {
 	app.set(`moment`, moment); // framework for managing time
 	app.set(`path`, path); // framework for directory paths
 	app.set(`multer`, multer); // framework for parsing multi-part forms
+	app.set(`randomToken`, randomToken) // random string
 	app.set(`sharp`, sharp); // framework for saving images
 	app.use(cors({credentials: true, origin: vars[env].portal})) // allows receiving of cookies from front-end
 	app.use(morgan(`tiny`)); // logging framework
