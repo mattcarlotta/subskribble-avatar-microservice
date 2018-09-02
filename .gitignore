@@ -3,6 +3,7 @@
 
 #env
 *.env
+env/
 
 #Server files and folders
 uploads/

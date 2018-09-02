@@ -10,24 +10,32 @@ const morgan 				= require(`morgan`);
 const path					= require(`path`);
 const multer				= require(`multer`);
 const sharp					= require(`sharp`);
-const vars					= require(`../config/vars.js`);
+const config				= require(`../env/config.js`);
 
 const env = process.env.NODE_ENV;
-console.log(`[SUBSKRIBBLE AVATAR MICROSERVICE ${env.toUpperCase()} ENVIRONMENT] \n`, vars[env], `\n`);
+const currentENV = () => {
+	const envirnoment = config[env];
+	let variables = ''
+	for (string in envirnoment) {
+		variables += `\x1b[33m• ${string.toUpperCase()}\x1b[0m: ${envirnoment[string]} \n `
+	}
+	return variables
+}
+console.log(`[ \x1b[1mSUBSKRIBBLE AVATAR MICROSERVICE ${env.toUpperCase()} ENVIRONMENT\x1b[0m ]\n ${currentENV()}`);
 //============================================================//
 /* APP MIDDLEWARE */
 //============================================================//
 module.exports = app => {
 	/// CONFIGS ///
-	app.set(`apiURL`, vars[env].apiURL); // sets current api route
+	app.set(`apiURL`, config[env].apiURL); // sets current api route
 	app.set(`env`, env); // sets current env mode (development, production or test)
-	app.set(`cookieKey`, vars[env].cookieKey); // sets unique cookie key
-	app.set(`dbpassword`, vars[env].dbpassword); // sets database password
-	app.set(`dbport`, vars[env].dbport); // sets database port
-	app.set(`dbowner`, vars[env].dbowner); // sets owner of database
-	app.set(`database`, vars[env].database); // sets database name
-	app.set(`port`, vars[env].port); // current listening port
-	app.set(`portal`, vars[env].portal); // sets current front-end url
+	app.set(`cookieKey`, config[env].cookieKey); // sets unique cookie key
+	app.set(`dbpassword`, config[env].dbpassword); // sets database password
+	app.set(`dbport`, config[env].dbport); // sets database port
+	app.set(`dbowner`, config[env].dbowner); // sets owner of database
+	app.set(`database`, config[env].database); // sets database name
+	app.set(`port`, config[env].port); // current listening port
+	app.set(`portal`, config[env].portal); // sets current front-end url
 
 	/// FRAMEWORKS ///
 	app.set(`bcrypt`, bcrypt); // framework for hashing/salting passwords
@@ -37,7 +45,7 @@ module.exports = app => {
 	app.set(`path`, path); // framework for directory paths
 	app.set(`multer`, multer); // framework for parsing multi-part forms
 	app.set(`sharp`, sharp); // framework for saving images
-	app.use(cors({credentials: true, origin: vars[env].portal})) // allows receiving of cookies from front-end
+	app.use(cors({credentials: true, origin: config[env].portal})) // allows receiving of cookies from front-end
 	app.use(morgan(`tiny`)); // logging framework
 	app.use(multer({
 		limits: {
@@ -59,7 +67,7 @@ module.exports = app => {
 	app.use(cookieSession({ // sets up a cookie session as req.session ==> set in passport local login strategy
 		name: `Authorization`,
 		maxAge: 30 * 24 * 60 * 60 * 1000, // expire after 30 days, 24hr/60m/60s/1000ms
-		keys: [vars[env].cookieKey] // unique cookie key to encrypt/decrypt
+		keys: [config[env].cookieKey] // unique cookie key to encrypt/decrypt
 	}));
 	app.set(`json spaces`, 2); // sets JSON spaces for clarity
 };
