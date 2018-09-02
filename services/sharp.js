@@ -1,9 +1,8 @@
 module.exports = app => async (req, res, next) => {
-	const { sendError } = app.shared.helpers;
+	const { createRandomString, sendError } = app.shared.helpers;
 	const fs = app.get(`fs`);
 	const sharp = app.get(`sharp`);
-	const randomToken = app.get('randomToken');
-	const randomString = randomToken(16);
+	const randomString = createRandomString();
 
 	if (req.err || !req.file) return sendError(req.err || `Unable to locate the requested file to be saved`, res, next);
 

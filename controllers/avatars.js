@@ -1,8 +1,6 @@
-const randomToken  = require(`random-token`).create(`abcdefghijklmnopqrstuvwxzyABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789`);
-
 module.exports = app => {
 	const { db, query: { createAvatar, createNotification, deleteAvatar, deleteAccountAvatar, getCurrentAvatarPath, getCurrentAvatarURL, updateAvatar } } = app.database;
-	const { currentDate, sendError } = app.shared.helpers;
+	const { createRandomToken, currentDate, sendError } = app.shared.helpers;
 	const apiURL = app.get(`apiURL`);
 	const fs = app.get(`fs`);
 
@@ -11,7 +9,7 @@ module.exports = app => {
 		create: async (req, res, done) => {
 			try {
 				const avatarurl = `${apiURL}/${req.file.path}`;
-				const token = randomToken(32);
+				const token = createRandomToken();
 				const date = currentDate();
 
 				await db.result(createAvatar, [req.session.id, avatarurl, req.file.path, token]);
