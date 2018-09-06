@@ -21,7 +21,7 @@ const currentENV = () => {
 	}
 	return variables
 }
-console.log(`[ \x1b[1mSUBSKRIBBLE AVATAR MICROSERVICE ${env.toUpperCase()} ENVIRONMENT\x1b[0m ]\n ${currentENV()}`);
+console.log(`\n[ \x1b[1mSUBSKRIBBLE AVATAR MICROSERVICE ${env.toUpperCase()} ENVIRONMENT\x1b[0m ]\n ${currentENV()}`);
 //============================================================//
 /* APP MIDDLEWARE */
 //============================================================//
