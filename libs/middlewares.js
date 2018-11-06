@@ -14,14 +14,29 @@ const config				= require(`../env/config.js`);
 
 const env = process.env.NODE_ENV;
 const currentENV = () => {
-	const envirnoment = config[env];
-	let variables = ''
-	for (string in envirnoment) {
-		variables += `\x1b[33m• ${string.toUpperCase()}\x1b[0m: ${envirnoment[string]} \n `
-	}
-	return variables
+  const envirnoment = config[env];
+  const keys = Object.keys(envirnoment);
+  const values = Object.values(envirnoment);
+
+  let variables = '';
+  for (let i = 0; i < keys.length; i += 1) {
+    variables += `\x1b[33m• ${keys[i].toUpperCase()}\x1b[0m: ${values[i]} \n `;
+  }
+  return variables;
+};
+
+// eslint-disable-next-line no-console
+console.log(`
+  \n[ \x1b[1mSUBSKRIBBLE AVATAR MICROSERVICE ${env.toUpperCase()} ENVIRONMENT\x1b[0m ]\n ${currentENV()}`
+);
+
+if (env !== 'development') {
+  // eslint-disable-next-line no-console
+  console.log(
+    `\n\x1b[1mYour application is running on: ${config[env].portal}\x1b[0m`,
+  );
 }
-console.log(`\n[ \x1b[1mSUBSKRIBBLE AVATAR MICROSERVICE ${env.toUpperCase()} ENVIRONMENT\x1b[0m ]\n ${currentENV()}`);
+
 //============================================================//
 /* APP MIDDLEWARE */
 //============================================================//
