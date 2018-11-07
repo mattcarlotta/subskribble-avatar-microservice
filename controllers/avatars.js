@@ -1,98 +1,167 @@
 module.exports = app => {
-	const { db, query: { createAvatar, createNotification, deleteAvatar, deleteAccountAvatar, getCurrentAvatarPath, getCurrentAvatarURL, updateAvatar } } = app.database;
-	const { createRandomToken, currentDate, sendError } = app.shared.helpers;
-	const apiURL = app.get(`apiURL`);
-	const fs = app.get(`fs`);
+  const {
+    db,
+    query: {
+      createAvatar,
+      createNotification,
+      deleteAvatar,
+      deleteAccountAvatar,
+      getCurrentAvatarPath,
+      getCurrentAvatarURL,
+      updateAvatar
+    }
+  } = app.database;
+  const { createRandomToken, currentDate, sendError } = app.shared.helpers;
+  const apiURL = app.get(`apiURL`);
+  const fs = app.get(`fs`);
 
-	return {
-		// SAVES A NEW AVATAR
-		create: async (req, res, done) => {
-			try {
-				await db.task('create-avatar', async dbtask => {
-					const avatarurl = `${apiURL}/${req.file.path}`;
-					const token = createRandomToken();
-					const date = currentDate();
+  return {
+    // SAVES A NEW AVATAR
+    create: async (req, res, done) => {
+      try {
+        await db.task("create-avatar", async dbtask => {
+          const avatarurl = `${apiURL}/${req.file.path}`;
+          const token = createRandomToken();
+          const date = currentDate();
 
-					await dbtask.result(createAvatar, [req.session.id, avatarurl, req.file.path, token]);
-					req.session.avatarurl = avatarurl;
+          await dbtask.result(createAvatar, [
+            req.session.id,
+            avatarurl,
+            req.file.path,
+            token
+          ]);
+          req.session.avatarurl = avatarurl;
 
-					await dbtask.none(createNotification, [req.session.id, 'settings', `Succesfully saved your avatar.`, date]);
+          await dbtask.none(createNotification, [
+            req.session.id,
+            "settings",
+            `Succesfully saved your avatar.`,
+            date
+          ]);
 
-					res.status(201).json({ avatarurl });
-				})
-			} catch (err) { return sendError(err, res, done); }
-		},
-		// DELETES CURRENT AVATAR WHILE LOGGED IN
-		deleteOne: async (req, res, done) => {
-			try {
-				await db.task('delete-avatar', async dbtask => {
-					const { avatarfilepath } = await dbtask.oneOrNone(getCurrentAvatarPath, [req.session.id])
-					if (!avatarfilepath) return sendError(`Unable to locate your current avatar file path`, res, done);
+          res.status(201).json({ avatarurl });
+        });
+      } catch (err) {
+        return sendError(err, res, done);
+      }
+    },
+    // DELETES CURRENT AVATAR WHILE LOGGED IN
+    deleteOne: async (req, res, done) => {
+      try {
+        await db.task("delete-avatar", async dbtask => {
+          const { avatarfilepath } = await dbtask.oneOrNone(
+            getCurrentAvatarPath,
+            [req.session.id]
+          );
+          if (!avatarfilepath)
+            return sendError(
+              `Unable to locate your current avatar file path`,
+              res,
+              done
+            );
 
-					await fs.unlink(`${avatarfilepath}`, async err => {
-						if (err) return sendError(err, res, done);
-					});
+          await fs.unlink(`${avatarfilepath}`, async err => {
+            if (err) return sendError(err, res, done);
+          });
 
-					await dbtask.result(deleteAvatar, [req.session.id]);
-					req.session.avatarurl = undefined;
+          await dbtask.result(deleteAvatar, [req.session.id]);
+          req.session.avatarurl = undefined;
 
-					res.status(201).json({ message: `Succesfully removed your current avatar.` });
-				})
-			} catch (err) { return sendError(err, res, done); }
-		},
-		// FETCHES CURRENT AVATAR WHEN USER LOGINS IN
-		fetchOne: async (req, res, done) => {
-			try {
-				const avatar = await db.oneOrNone(getCurrentAvatarURL, [req.session.id])
-				if (!avatar) {
-					res.status(201).send(null);
-				} else {
-					req.session.avatarurl = avatar.avatarurl;
-					res.status(201).json({ avatarurl: avatar.avatarurl });
-				}
-			} catch (err) { return sendError(err, res, done); }
-		},
-		// DELETES CURRENT AVATAR WHEN USER ACCOUNT HAS BEEN CLOSED
-		removeAccount: async (req, res, done) => {
-			if (!req.body || !req.body.token || !req.body.userid) return sendError(`Missing avatar delete parameters.`, res, done);
-			const { token, userid } = req.body;
+          res
+            .status(201)
+            .json({ message: `Succesfully removed your current avatar.` });
+        });
+      } catch (err) {
+        return sendError(err, res, done);
+      }
+    },
+    // FETCHES CURRENT AVATAR WHEN USER LOGINS IN
+    fetchOne: async (req, res, done) => {
+      try {
+        const avatar = await db.oneOrNone(getCurrentAvatarURL, [
+          req.session.id
+        ]);
+        if (!avatar) {
+          res.status(200).send(null);
+        } else {
+          req.session.avatarurl = avatar.avatarurl;
+          res.status(201).json({ avatarurl: avatar.avatarurl });
+        }
+      } catch (err) {
+        return sendError(err, res, done);
+      }
+    },
+    // DELETES CURRENT AVATAR WHEN USER ACCOUNT HAS BEEN CLOSED
+    removeAccount: async (req, res, done) => {
+      if (!req.body || !req.body.token || !req.body.userid)
+        return sendError(`Missing avatar delete parameters.`, res, done);
+      const { token, userid } = req.body;
 
-			try {
-				await db.task('remove-avatar-account', async dbtask => {
-					const { avatarfilepath } = await dbtask.oneOrNone(getCurrentAvatarPath, [userid]);
-					if (!avatarfilepath) return sendError(`Unable to locate your current avatar file path.`, res, done);
+      try {
+        await db.task("remove-avatar-account", async dbtask => {
+          const { avatarfilepath } = await dbtask.oneOrNone(
+            getCurrentAvatarPath,
+            [userid]
+          );
+          if (!avatarfilepath)
+            return sendError(
+              `Unable to locate your current avatar file path.`,
+              res,
+              done
+            );
 
-					await fs.unlink(`${avatarfilepath}`, async err => {
-						if (err) return sendError(err, res, done);
-					});
+          await fs.unlink(`${avatarfilepath}`, async err => {
+            if (err) return sendError(err, res, done);
+          });
 
-					await dbtask.none(deleteAccountAvatar, [userid, token]);
+          await dbtask.none(deleteAccountAvatar, [userid, token]);
 
-					res.status(201).send(null);
-				})
-			} catch (err) { return sendError(err, res, done); }
-		},
-		// DELETES CURRENT AVATAR
-		updateOne: async (req, res, done) => {
-			try {
-				await db.task('update-avatar', async dbtask => {
-					const { avatarfilepath } = await dbtask.oneOrNone(getCurrentAvatarPath, [req.session.id]);
-					if (!avatarfilepath) return sendError(`Unable to locate your current avatar file path`, res, done);
+          res.status(201).send(null);
+        });
+      } catch (err) {
+        return sendError(err, res, done);
+      }
+    },
+    // DELETES CURRENT AVATAR
+    updateOne: async (req, res, done) => {
+      try {
+        await db.task("update-avatar", async dbtask => {
+          const { avatarfilepath } = await dbtask.oneOrNone(
+            getCurrentAvatarPath,
+            [req.session.id]
+          );
+          if (!avatarfilepath)
+            return sendError(
+              `Unable to locate your current avatar file path`,
+              res,
+              done
+            );
 
-					await fs.unlink(`${avatarfilepath}`, async err => {
-						if (err) return sendError(err, res, done);
-					});
+          await fs.unlink(`${avatarfilepath}`, async err => {
+            if (err) return sendError(err, res, done);
+          });
 
-					const avatarurl = `${apiURL}/${req.file.path}`;
-					await dbtask.result(updateAvatar, [req.session.id, avatarurl, req.file.path]);
-					req.session.avatarurl = avatarurl;
+          const avatarurl = `${apiURL}/${req.file.path}`;
+          await dbtask.result(updateAvatar, [
+            req.session.id,
+            avatarurl,
+            req.file.path
+          ]);
+          req.session.avatarurl = avatarurl;
 
-					const date = currentDate();
-					await dbtask.none(createNotification, [req.session.id, 'settings', `Succesfully updated your avatar.`, date]);
+          const date = currentDate();
+          await dbtask.none(createNotification, [
+            req.session.id,
+            "settings",
+            `Succesfully updated your avatar.`,
+            date
+          ]);
 
-					res.status(201).json({ avatarurl });
-				})
-			} catch (err) { return sendError(err, res, done); }
-		}
-	}
-}
+          res.status(201).json({ avatarurl });
+        });
+      } catch (err) {
+        return sendError(err, res, done);
+      }
+    }
+  };
+};
