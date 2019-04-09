@@ -1,13 +1,8 @@
-const express 	= require(`express`);
-const app 			= express();
-const consign 	= require(`consign`);
+require('@babel/register');
+const express = require('express');
 
-consign({ locale: `en-us`, verbose: false})
-	.include(`libs/middlewares.js`)
-	.then(`database`)
-	.then(`shared`)
-	.then(`services`)
-	.then(`controllers`)
-	.then(`routes`)
-	.then(`libs/server.js`)
-	.into(app);
+const app = express();
+
+require('./middlewares')(app);
+require('./routes')(app);
+require('./server')(app);

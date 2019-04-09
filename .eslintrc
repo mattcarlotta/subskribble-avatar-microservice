@@ -1,0 +1,40 @@
+{
+  "extends": ["airbnb-base"],
+  "env": {
+    "jest": true
+  },
+  "root": true,
+  "rules": {
+    "consistent-return": 0,
+    "global-require": 0,
+    "max-len": 0,
+    "no-unused-expressions": 0,
+    "valid-typeof": 0
+  },
+  "settings": {
+    "import/resolver": {
+      "babel-module": {
+        "alias": {
+          "controllers": "./controllers",
+          "db": "./database/db",
+          "queries": "./database/queries",
+          "env": "./env",
+          "middlewares": "./middlewares",
+          "routes": "./routes",
+          "server": "./server",
+          "strategies": "./services/strategies",
+          "helpers": "./shared/helpers",
+          "utils": "./utils"
+        }
+      }
+    }
+  },
+  "overrides": [
+    {
+      "files": ["*.test.js"],
+      "rules": {
+        "no-undef": 0
+      }
+    }
+  ]
+}

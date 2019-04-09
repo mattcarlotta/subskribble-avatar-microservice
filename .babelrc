@@ -1,0 +1,21 @@
+{
+  "plugins": [
+    [
+      "module-resolver",
+      {
+        "alias": {
+          "controllers": "./controllers",
+          "db": "./database/db",
+          "queries": "./database/queries",
+          "env": "./env",
+          "middlewares": "./middlewares",
+          "routes": "./routes",
+          "server": "./server",
+          "strategies": "./services/strategies",
+          "helpers": "./shared/helpers",
+          "utils": "./utils"
+        }
+      }
+    ]
+  ]
+}
