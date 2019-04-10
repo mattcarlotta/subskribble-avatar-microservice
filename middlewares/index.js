@@ -1,3 +1,4 @@
+/* eslint-disable */
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const cookieSession = require("cookie-session");
@@ -9,7 +10,6 @@ const config = require("env");
 const env = process.env.NODE_ENV;
 const inTesting = env === "test";
 
-/* eslint-disable */
 if (!inTesting) {
   const currentENV = () => {
     const envirnoment = config[env];
@@ -36,7 +36,6 @@ if (!inTesting) {
     );
   }
 }
-/* eslint enable */
 
 //= ===========================================================//
 /* APP MIDDLEWARE */
@@ -73,3 +72,4 @@ module.exports = app => {
   );
   app.set("json spaces", 2); // sets JSON spaces for clarity
 };
+/* eslint enable */

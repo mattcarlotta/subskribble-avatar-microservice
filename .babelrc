@@ -12,6 +12,7 @@
           "routes": "./routes",
           "server": "./server",
           "strategies": "./services/strategies",
+          "authErrors": "./shared/authErrors",
           "helpers": "./shared/helpers",
           "utils": "./utils"
         }

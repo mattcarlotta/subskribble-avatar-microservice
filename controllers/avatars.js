@@ -10,6 +10,8 @@ const {
   updateAvatar,
 } = require('queries');
 const { createRandomToken, currentDate, sendError } = require('helpers');
+const { missingDeleteParams, unableToLocateAvatar } = require('authErrors');
+
 const config = require('env');
 
 const env = process.env.NODE_ENV;
@@ -54,11 +56,7 @@ module.exports = {
           [req.session.id],
         );
         if (!avatarfilepath) {
-          return sendError(
-            'Unable to locate your current avatar file path',
-            res,
-            done,
-          );
+          return sendError(unableToLocateAvatar, res, done);
         }
 
         await fs.unlink(`${avatarfilepath}`, async (err) => {
@@ -94,7 +92,7 @@ module.exports = {
   removeAccount: async (req, res, done) => {
     const { token, userid } = req.body;
 
-    if (!token || !userid) return sendError('Missing avatar delete parameters.', res, done);
+    if (!token || !userid) return sendError(missingDeleteParams, res, done);
 
     try {
       await db.task('remove-avatar-account', async (dbtask) => {
@@ -103,11 +101,7 @@ module.exports = {
           [userid],
         );
         if (!avatarfilepath) {
-          return sendError(
-            'Unable to locate your current avatar file path.',
-            res,
-            done,
-          );
+          return sendError(unableToLocateAvatar, res, done);
         }
 
         await fs.unlink(`${avatarfilepath}`, async (err) => {
@@ -131,11 +125,7 @@ module.exports = {
           [req.session.id],
         );
         if (!avatarfilepath) {
-          return sendError(
-            'Unable to locate your current avatar file path',
-            res,
-            done,
-          );
+          return sendError(unableToLocateAvatar, res, done);
         }
 
         await fs.unlink(`${avatarfilepath}`, async (err) => {

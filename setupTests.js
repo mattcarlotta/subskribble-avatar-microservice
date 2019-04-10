@@ -1,3 +1,5 @@
+jest.mock('fs');
+
 expect.extend({
   toBeNullOrType: (received, type) => ({
     message: () => `expected ${received} to be null or ${type}`,
@@ -5,6 +7,6 @@ expect.extend({
   }),
 });
 
-global.getCookie = require('./utils/getCookie');
+// global.getCookie = require("./utils/getCookie");
 global.db = require('./database/db');
 global.app = require('./utils/setup');

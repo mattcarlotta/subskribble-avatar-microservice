@@ -20,7 +20,7 @@ module.exports = {
     'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$/.',
     64,
   ),
-  createRandomString: () => tokenGenerator(
+  createRandomText: () => tokenGenerator(
     'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
     32,
   ),

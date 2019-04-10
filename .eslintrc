@@ -9,7 +9,8 @@
     "global-require": 0,
     "max-len": 0,
     "no-unused-expressions": 0,
-    "valid-typeof": 0
+    "valid-typeof": 0,
+    "no-unreachable": 0
   },
   "settings": {
     "import/resolver": {
@@ -23,6 +24,7 @@
           "routes": "./routes",
           "server": "./server",
           "strategies": "./services/strategies",
+          "authErrors": "./shared/authErrors",
           "helpers": "./shared/helpers",
           "utils": "./utils"
         }
