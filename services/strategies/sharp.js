@@ -1,9 +1,9 @@
-const fs = require('fs');
-const sharp = require('sharp');
-const { createRandomString, sendError } = require('helpers');
-const { unableToProcessFile } = require('authErrors');
+import fs from 'fs';
+import sharp from 'sharp';
+import { createRandomString, sendError } from 'helpers';
+import { unableToProcessFile } from 'authErrors';
 
-module.exports = async (req, res, next) => {
+export default async (req, res, next) => {
   const randomString = createRandomString();
 
   if (req.err || !req.file) {

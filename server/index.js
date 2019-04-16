@@ -1,7 +1,7 @@
-const express = require('express');
-const config = require('env');
+import express from 'express';
+import config from 'env';
 
-module.exports = (app) => {
+export default (app) => {
   const env = process.env.NODE_ENV;
   //= ===========================================================//
   // EXPRESS SERVE AVATAR IMAGES

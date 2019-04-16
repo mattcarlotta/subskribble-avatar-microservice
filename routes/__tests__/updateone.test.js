@@ -1,10 +1,10 @@
 import app from 'utils/setup';
-import { create } from 'controllers/avatars';
+import { updateOne } from 'controllers/avatars';
 import { requireAuth, saveImage } from 'strategies';
 
 jest.mock('controllers/avatars', () => ({
   ...require.requireActual('controllers/avatars'),
-  create: jest.fn(done => done()),
+  updateOne: jest.fn(done => done()),
 }));
 
 jest.mock('services/strategies', () => ({
@@ -12,14 +12,14 @@ jest.mock('services/strategies', () => ({
   saveImage: jest.fn((req, res, done) => done()),
 }));
 
-describe('Create Avatars Route', () => {
-  it('routes requests to the create controller', async () => {
+describe('Update An Avatar Route', () => {
+  it('routes requests to the updateOne controller', async () => {
     await app()
-      .post('/api/avatar/create')
+      .put('/api/avatar/update')
       .then(() => {
         expect(requireAuth).toHaveBeenCalledTimes(1);
         expect(saveImage).toHaveBeenCalledTimes(1);
-        expect(create).toHaveBeenCalledTimes(1);
+        expect(updateOne).toHaveBeenCalledTimes(1);
       });
   });
 });

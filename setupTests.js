@@ -6,7 +6,3 @@ expect.extend({
     pass: received === null || typeof received === type,
   }),
 });
-
-// global.getCookie = require("./utils/getCookie");
-global.db = require('./database/db');
-global.app = require('./utils/setup');

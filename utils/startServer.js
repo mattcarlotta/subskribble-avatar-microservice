@@ -1,11 +1,10 @@
-import request from 'supertest';
 import express from 'express';
 import middlewares from 'middlewares';
 import routes from 'routes';
+import server from 'server';
 
 const app = express();
 
 middlewares(app);
 routes(app);
-
-export default () => request(app);
+server(app);

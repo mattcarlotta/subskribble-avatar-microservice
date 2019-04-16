@@ -1,5 +1,5 @@
-const moment = require('moment');
-const random = require('lodash/random');
+import moment from 'moment';
+import random from 'lodash/random';
 
 const tokenGenerator = (str, tlen) => {
   const arr = [...str];
@@ -12,20 +12,25 @@ const tokenGenerator = (str, tlen) => {
   return token;
 };
 
-module.exports = {
-  currentDate: () => moment()
-    .utcOffset(-7)
-    .toISOString(true),
-  createRandomToken: () => tokenGenerator(
-    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$/.',
-    64,
-  ),
-  createRandomText: () => tokenGenerator(
-    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
-    32,
-  ),
-  sendError: (err, res, done) => {
-    return res.status(500).json({ err: err.toString() });
-    done();
-  },
+const currentDate = () => moment()
+  .utcOffset(-7)
+  .toISOString(true);
+
+const createRandomToken = () => tokenGenerator(
+  'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$/.',
+  64,
+);
+
+const createRandomString = () => tokenGenerator(
+  'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
+  32,
+);
+
+const sendError = (err, res, done) => {
+  return res.status(500).json({ err: err.toString() });
+  done();
+};
+
+export {
+  currentDate, createRandomToken, createRandomString, sendError,
 };

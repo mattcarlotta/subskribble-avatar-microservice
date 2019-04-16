@@ -1,7 +1,7 @@
-const isEmpty = require('lodash/isEmpty');
-const { badCredentials } = require('authErrors');
+import isEmpty from 'lodash/isEmpty';
+import { badCredentials } from 'authErrors';
 
-module.exports = (req, res, next) => {
+export default (req, res, next) => {
   if (isEmpty(req.session) || !req.session.id) {
     return res.status(401).send({ err: badCredentials });
   }

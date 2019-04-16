@@ -1,5 +1,5 @@
-const avatarRoutes = require('./avatars');
+import avatarRoutes from './avatars';
 
-module.exports = (app) => {
+export default (app) => {
   avatarRoutes(app);
 };

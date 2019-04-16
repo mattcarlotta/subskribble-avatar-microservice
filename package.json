@@ -3,15 +3,15 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "test": "NODE_ENV=test jest --watchAll",
+    "test": "NODE_ENV=test WATCHING=true jest --config ./jest.json --watchAll",
     "start": "NODE_ENV=production node app.js",
     "dev": "NODE_ENV=development nodemon app.js",
     "lint": "lint-staged"
   },
   "lint-staged": {
     "*.js": [
-      "prettier --write --double-quote",
       "eslint --fix",
+      "cross-env NODE_ENV=test jest --config ./jest.json --findRelatedTests",
       "git add"
     ]
   },
@@ -20,30 +20,11 @@
       "uploads"
     ]
   },
-  "jest": {
-    "testEnvironment": "node",
-    "verbose": false,
-    "modulePaths": [
-      "<rootDir>",
-      "node_modules"
-    ],
-    "setupFilesAfterEnv": [
-      "<rootDir>/setupTests.js"
-    ],
-    "moduleFileExtensions": [
-      "js",
-      "json"
-    ],
-    "testPathIgnorePatterns": [
-      "<rootDir>/node_modules/"
-    ],
-    "globalSetup": "<rootDir>/utils/seedDB.js",
-    "globalTeardown": "<rootDir>/utils/teardownDB.js"
-  },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@babel/core": "^7.4.3",
+    "@babel/preset-env": "^7.4.3",
     "@babel/register": "^7.4.0",
     "babel-plugin-module-resolver": "^3.2.0",
     "bcrypt": "^3.0.4",
@@ -63,6 +44,8 @@
     "supertest": "^4.0.2"
   },
   "devDependencies": {
+    "babel-jest": "^24.7.1",
+    "cross-env": "^5.2.0",
     "eslint": "^5.8.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-import-resolver-babel-module": "^5.0.1",

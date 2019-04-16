@@ -1,11 +1,11 @@
 /* eslint-disable */
-const bodyParser = require("body-parser");
-const cookieParser = require("cookie-parser");
-const cookieSession = require("cookie-session");
-const cors = require("cors");
-const morgan = require("morgan");
-const multer = require("multer");
-const config = require("env");
+import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
+import cookieSession from "cookie-session";
+import cors from "cors";
+import morgan from "morgan";
+import multer from "multer";
+import config from "env";
 
 const env = process.env.NODE_ENV;
 const inTesting = env === "test";
@@ -40,7 +40,7 @@ if (!inTesting) {
 //= ===========================================================//
 /* APP MIDDLEWARE */
 //= ===========================================================//
-module.exports = app => {
+export default app => {
   app.use(cors({ credentials: true, origin: config[env].portal })); // allows receiving of cookies from front-end
   if (!inTesting) app.use(morgan("tiny")); // logging framework
   app.use(

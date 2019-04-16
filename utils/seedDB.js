@@ -1,20 +1,19 @@
 /* eslint-disable */
-require("@babel/register");
-const bcrypt = require("bcrypt");
-const moment = require("moment");
-const db = require("../database/db");
-const {
+import bcrypt from "bcrypt";
+import moment from "moment";
+import db from "../database/db";
+import {
   createAvatar,
   createNewUser,
   findUserByEmail,
   setUserAsAdmin,
   verifyEmail
-} = require("../database/queries");
-const {
+} from "../database/queries";
+import {
   currentDate,
   createRandomText,
   createRandomToken
-} = require("../shared/helpers");
+} from "../shared/helpers";
 
 const fakeText = () => createRandomText();
 const selectUserid = id => `(SELECT id FROM users WHERE id='${id}')`;
