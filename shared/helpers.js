@@ -1,10 +1,10 @@
-import moment from 'moment';
-import random from 'lodash/random';
+import moment from "moment";
+import random from "lodash/random";
 
 const tokenGenerator = (str, tlen) => {
   const arr = [...str];
   const max = arr.length - 1;
-  let token = '';
+  let token = "";
   for (let i = 0; i < tlen; i += 1) {
     const int = random(max);
     token += arr[int];
@@ -17,19 +17,21 @@ const currentDate = () => moment()
   .toISOString(true);
 
 const createRandomToken = () => tokenGenerator(
-  'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$/.',
+  "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$/.",
   64,
 );
 
 const createRandomString = () => tokenGenerator(
-  'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
+  "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
   32,
 );
 
+/* eslint-disable */
 const sendError = (err, res, done) => {
-  return res.status(500).json({ err: err.toString() });
+  return res.status(400).json({ err: err.toString() });
   done();
 };
+/* eslint-enable */
 
 export {
   currentDate, createRandomToken, createRandomString, sendError,

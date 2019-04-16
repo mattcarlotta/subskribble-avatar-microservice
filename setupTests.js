@@ -1,4 +1,4 @@
-jest.mock('fs');
+jest.mock("fs");
 
 expect.extend({
   toBeNullOrType: (received, type) => ({

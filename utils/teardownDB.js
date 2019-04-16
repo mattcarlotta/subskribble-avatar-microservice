@@ -8,6 +8,7 @@ const tearDownDB = async () => {
     try {
       await dbtask.none(`
         DROP TABLE IF EXISTS users CASCADE;
+        DROP TABLE IF EXISTS notifications;
         DROP TABLE IF EXISTS avatars;
         `);
 
